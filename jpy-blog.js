@@ -1,34 +1,43 @@
-console.log('scy=1');
 
 /************************************************/
 // unit-test browser/simulator 
+function xpr(...args) { console.log(args); }
 if (typeof process != 'undefined') {
-window = new Object();
 document = new Object();
+document.style = new Object();
 document.location = new Object();
 document.location.pathname = "welcome.html";
+document.addEventListener = function(s,fx){ xpr('dx.a'); return true; };
+document.style.visibility = 'nodejs-sim-style';
+document.load = function(fx){ xpr('dx.l'); return true; };
+document.onload = function(fx){ xpr('dx.ol'); return true; };
 function jQuery(...args){  
-    this.load = function(fx){ print('tx.l'); fx(); return true; };
-    this.css = function(...f){ print('tx.css', arguments); return "block"; };
-    this.return= function(){ print('tx.r'); return true; }; return this;
+    this.load = function(fx){ xpr('tx.l'); fx(); return true; };
+    this.css = function(...f){ xpr('tx.css', arguments); return "block"; };
+    this.return= function(){ xpr('tx.r'); return true; }; return this;
 }
-function foo(x, ...args) { print('foo', x, args, ...args, arguments); }
-function bar(x, ...args) { print('bar', x, args, ...args, arguments); }
+document.id = [];
+document.getElementById = function(id){ xpr('dx.a', id); };
+window = new Object();
+window.addEventListener = function(s,fx){ xpr('wx.a'); return true; };
+window.load = function(fx){ xpr('wx.l'); return true; };
+window.onload = function(fx){ xpr('wx.ol'); return true; };
+function foo(x, ...args) { xpr('foo', x, args, ...args, arguments); }
+function bar(x, ...args) { xpr('bar', x, args, ...args, arguments); }
 }
 /************************************************/
 
-window.addEventListener("DOMContentLoaded", function () { console.log(''+(+new Date)+': DOM Content Loaded', typeof jQuery) });
-document.addEventListener('readystatechange', () => console.log('rsc', document.readyState, typeof jQuery));
-document.addEventListener('load', () => console.log('load', document.load, typeof jQuery));
+var bnav = [ '#Header1','.post-title','.footer-outer','.blog-pager','#navbar' ];
+var bids = [];
 
+var snav = [ 'welcome', 'marketing','learning','rlanguage','tableau' ];
+var jnav = [];
+var cnav = [];
+var hnav = [];
 
-function pr(...args) { console.log(args); }
-var bnav = [ '#Header1','.post-title','.footer-outer','.blog-pager','#navbar' ]
-var jnav = [ '#jpy-marketing','#jpy-learning','#jpy-rlanguage','#jpy-tableau' ]
-var hnav = [ 'marketing.html','learning.html','rlanguage.html','tableau.html' ]
-var snav = [ 'marketing','learning','rlanguage','tableau' ]
-var jhdr = [ '#jpy-stay' ]
 var dvis = {};
+var jids = {};
+var cids = {};
 
 
 function basename(str, ext) {
@@ -39,68 +48,55 @@ function basename(str, ext) {
 }
 
 function jpyInit() {
-console.log('scy=2a');
-	for(i in bnav) {
-		avis = jQuery(i).css('display');
-		dvis[ bnav[i] ] = avis;
+
+	for (i in snav) {
+		jnav[snav[i]] = 'jpy-' + snav[i];
+		hnav[snav[i]] = snav[i] + '.html';
 	}
+
+	for (i in jnav)
+		jids[jnav[i]] = document.getElementById(jnav[i]);
+
+	for (i in cnav)
+		cids[cnav[i]] = document.getElementById(cnav[i]);
+}
+function setstyle(id, style, value) {
+	if (jQuery(id).css(style) != value)
+		jQuery(id).css(style, value);
 }
 
 function navid(fullpath) {
-	bn = basename(fullpath, '.html');
-	if (bn in snav)
-		return('#jpy-' + snav);
-	return('#jpy-stay')
+	var bn = basename(fullpath, '.html');
+	var id = '#jpy-' + bn;
+	return( id );
 }
 
 function jpyNavs() {
-console.log('scy=3a');
 
-    fullpath = document.location.pathname;
-	thisPage = basename(fullpath, '.html');
+	// set elements visible/hidden elements on a page
 
-    if (fullpath.indexOf("/welcome/") != 0) {
-		jQuery('#jpy-stay').css('visibility', 'hidden');
-	} else {
-		jQuery('#jpy-stay').css('visibility', 'visible');
-	}
+    var fullpath = document.location.pathname;
+	var thisPage = basename(fullpath, '.html');
 
-	nid = navid(fullpath)
-	jQuery(nid).css('visibility', 'hidden');
+	var vsetall = 'hidden';
+    if (fullpath.indexOf("welcome") > 0)
+		vsetall = 'visible';
+
+	// set only the "page" button visible
 	for (i in snav) {
-		if (snav[i] != thisPage) {
-			idnot = '#jpy-' + snav[i];
-			jQuery(idnot).css('visibility', 'visible');
-		}
+		var idnot = '#jpy-' + snav[i];
+		if (snav[i] == thisPage)
+			setstyle(idnot, 'visibility', 'visible');
+		else
+			setstyle(idnot, 'visibility', vsetall);
 	}
-	return('#jpy-stay')
+	return(thisPage);
 }
 
 window.onload = function() {
-console.log('scy=2.0');
-typeof jQuery == 'function' && 
-jQuery(window).load(function(){
-console.log('scy=2');
+	if (typeof jQuery == 'function') {
 		jpyInit();
-console.log('scy=3');
 		jpyNavs();
-console.log('scy=4');
-});
-console.log('scy=n');
+	}
 }
 
-document.onload = function() { console.log('Do'); console.log(typeof jQuery); }
-window.onload = function() { console.log('Wo'); console.log(typeof jQuery); }
-window.onload = function() { console.log('Wo3'); console.log(typeof jQuery); }
-window.onload = function() { console.log('Wo4'); console.log(typeof jQuery); }
-
-document.addEventListener('load', () => console.log('load-2', document.load, typeof jQuery));
-document.addEventListener('readystatechange', () => console.log('rsc-2', document.readyState, typeof jQuery));
-window.addEventListener("DOMContentLoaded", function () { console.log(''+(+new Date)+': DOM Content Loaded-2', typeof jQuery) });
-
-document.load = function() { console.log('Dl'); console.log(typeof jQuery); }
-window.load = function() { console.log('Wl'); console.log(typeof jQuery); }
-window.load = function() { console.log('Wl3'); console.log(typeof jQuery); }
-window.load = function() { console.log('Wl4'); console.log(typeof jQuery); }
-
-console.log('scy=n');
