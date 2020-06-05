@@ -1,31 +1,36 @@
-
-/************************************************/
-// unit-test browser/simulator 
-function xpr(...args) { console.log(args); }
+/* 
+ * mini unit-test browser/simulator for command-line/node.js; r.i.p. dmr.
+*/
+function xpr() { console.log(arguments); }
 if (typeof process != 'undefined') {
+window = new Object();
+window.addEventListener = function(){ av=arguments; xpr('wx.a', av); for (i in av) { if (typeof av[i] == 'function') av[i](); } return true; };
 document = new Object();
-document.style = new Object();
+document.onload = function(fx){ xpr('dx.ol'); return true; };
 document.location = new Object();
 document.location.pathname = "welcome.html";
-document.addEventListener = function(s,fx){ xpr('dx.a'); return true; };
-document.style.visibility = 'nodejs-sim-style';
-document.load = function(fx){ xpr('dx.l'); return true; };
-document.onload = function(fx){ xpr('dx.ol'); return true; };
-function jQuery(...args){  
-    this.load = function(fx){ xpr('tx.l'); fx(); return true; };
-    this.css = function(...f){ xpr('tx.css', arguments); return "block"; };
-    this.return= function(){ xpr('tx.r'); return true; }; return this;
-}
 document.id = [];
-document.getElementById = function(id){ xpr('dx.a', id); };
-window = new Object();
-window.addEventListener = function(s,fx){ xpr('wx.a'); return true; };
-window.load = function(fx){ xpr('wx.l'); return true; };
-window.onload = function(fx){ xpr('wx.ol'); return true; };
-function foo(x, ...args) { xpr('foo', x, args, ...args, arguments); }
-function bar(x, ...args) { xpr('bar', x, args, ...args, arguments); }
+document.getElementById = function(id){ xpr('ge.i', id); var e = new Object; e.id = id; return(e); };
+document.style = new Object();
+document.style.visibility = ['visible','hidden'][Math.floor(Math.random() * 2)];
+var jQuery = function() {
+    this.load = function(fx){ xpr('jq.l'); fx(); return true; };
+    this.css = function(){ 
+		var av = arguments;
+		xpr('jq.css', av);
+		if (av[0] == 'visibility' && av.length == 2)
+			console.log('jq.css set:', av[0], av[1]);
+		if (av[0] == 'visibility' && av.length == 1)
+			return ['visible','hidden'][Math.floor(Math.random() * 2)];
+		return new Object();
+	};
+    this.return = function(){ xpr('jq.r'); return true; };
+	return this;
 }
-/************************************************/
+var foo = function() { xpr('foo', arguments); }
+var bar = function() { xpr('bar', arguments); }
+}
+/* mini unit-test browser/simulator for command-line/node.js */
 
 var bnav = [ '#Header1','.post-title','.footer-outer','.blog-pager','#navbar' ];
 var bids = [];
@@ -41,7 +46,7 @@ var cids = {};
 
 
 function basename(str, ext) {
-    rx = str.substr(str.lastIndexOf('/') + 1);
+    var rx = str.substr(str.lastIndexOf('/') + 1);
 	if (ext)
 		rx = rx.slice(0, rx.lastIndexOf(ext));
 	return(rx);
@@ -49,12 +54,12 @@ function basename(str, ext) {
 
 function jpyInit() {
 
-	for (i in snav) {
+	for (var i in snav) {
 		jnav[snav[i]] = 'jpy-' + snav[i];
 		hnav[snav[i]] = snav[i] + '.html';
 	}
 
-	for (i in jnav)
+	for (var i in jnav)
 		jids[jnav[i]] = document.getElementById(jnav[i]);
 
 	for (i in cnav)
@@ -83,7 +88,7 @@ function jpyNavs() {
 		vsetall = 'visible';
 
 	// set only the "page" button visible
-	for (i in snav) {
+	for (var i in snav) {
 		var idnot = '#jpy-' + snav[i];
 		if (snav[i] == thisPage)
 			setstyle(idnot, 'visibility', 'visible');
@@ -98,5 +103,10 @@ window.onload = function() {
 		jpyInit();
 		jpyNavs();
 	}
+}
+
+/* mini unit-test browser/simulator for command-line/node.js */
+if (typeof process != 'undefined') {
+	window.onload();
 }
 
