@@ -32,7 +32,7 @@ var bar = function() { xpr('bar', arguments); }
 }
 /* mini unit-test browser/simulator for command-line/node.js */
 
-var bnav = [ '#Header1','.post-title','.footer-outer','.blog-pager','#navbar' ];
+var bnav = [ '#Header1','.post-title', 'post-footer','.footer-outer','.blog-pager','#navbar' ];
 var bids = [];
 
 var snav = [ 'welcome', 'marketing','learning','rlanguage','tableau' ];
